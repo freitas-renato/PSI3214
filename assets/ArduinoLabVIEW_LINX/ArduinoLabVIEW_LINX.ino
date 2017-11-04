@@ -59,5 +59,3 @@ int readWave(unsigned char numInputBytes, unsigned char* input, unsigned char* n
   return 0;
 }
 
-
-

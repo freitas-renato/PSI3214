@@ -1,2 +1,9 @@
-.vscode
-.git
+*.vscode
+
+#tex files
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+/build/
