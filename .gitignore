@@ -6,4 +6,4 @@
 *.log
 *.out
 *.toc
-/build/
+build/*
