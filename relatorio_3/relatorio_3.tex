@@ -1,0 +1,253 @@
+\documentclass[12pt, a4paper, titlepage, oneside]{article}
+
+\usepackage{times}
+\usepackage[brazil]{babel}
+\usepackage{fancyhdr}
+\usepackage[utf8]{inputenc} %codificacao
+\usepackage[T1]{fontenc}
+\usepackage{graphicx} %incluir figuras
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{indentfirst} %identa o primeiro parágrafo
+
+%\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[left=2.5cm,right=2.5cm]{geometry}
+
+%\title{Relatório}
+%\author{Grupo 5}
+
+\begin{document}	
+	\begin{titlepage}
+		\begin{center}
+			\textbf{ESCOLA POLITÉCNICA DA UNIVERSIDADE DE SÃO PAULO\\
+			\begin{figure}[h!]
+				\centering
+				\includegraphics{./imagens/minerva_top.png}
+				\label{fig:minerva_top}
+			\end{figure}
+			PSI-3214 - Laboratório de Instrumentação Elétrica\\\vspace{1.4cm}
+			\begin{figure}[!h]
+				\centering
+				\includegraphics[scale=0.7]{./imagens/harmony.png}
+				\label{fig:harmony}
+			\end{figure}
+			%Projeto Harmony\\\vspace{2cm}
+			Turma 5 - Grupo 5\\\vspace{0.5cm}
+			%\begin{description}
+			%	\centering
+			%	\item[Filipe Gabriel Santos] 9837761
+			%	\item[Renato de Oliveira Freitas] 9837708
+			%	\item[Tamy Beatriz Miyano] 9737563
+			%\end{description}
+			Filipe Gabriel Santos........................9837761\\
+			Renato de Oliveira Freitas................9837708\\
+			Tamy Beatriz Miyano........................9837563\\\vspace{2.6cm}
+			\today}
+		\end{center}
+	\end{titlepage}
+	
+	\tableofcontents
+	\newpage
+	
+	\begin{abstract}
+		
+			Ondas sonoras consistem em vibrações mecânicas de um meio natural e se propagam com uma velocidade que depende de diversos fatores, entre eles a natureza do meio. 
+			
+Nota musical é um termo empregado para designar o elemento mínimo de um som, formado por um único modo de vibração do ar. Sendo assim, a cada nota corresponde uma duração e está associada uma frequência. Apesar de diferentes, quando os instrumentos reproduzem uma mesma nota, o som é agradável. Isso acontece pois todas as componentes dessa melodia são compostas por múltiplos inteiros da frequência original. Para entender melhor esse conceito podemos analisar a tabela ao lado, que relaciona as notas e suas respectivas frequências: A nota dó (C) corresponde a frequência de 261,63 Hz, enquanto a nota sol (G) é aproximadamente 392 Hz, que é 3/2 a frequência do dó. \cite{nota-musical}
+
+Outro fator importante para diferenciar os sons é a amplitude de cada harmônica, ou seja, sua intensidade. Existem instrumentos em que algumas harmônicas têm amplitudes superiores a própria frequência fundamental, tornando o som bem mais grave ou agudo.
+
+Matematicamente, representa-se o espectro sonoro como uma série de Fourier, uma função no domínio das frequências, em oposição à forma de onda que é uma função no domínio do tempo. Qualquer onda sonora, assim como qualquer outro fenômeno ondulatório, pode ser representado através de seu espectro. Um gráfico de espectro sonoro é composto de barras, cada uma delas representando a amplitude de uma das frequências componentes do som analisado. Este tipo de gráfico é utilizado em equipamentos eletrônicos, tais como analisadores de espectro ou em equalizadores. No caso dos analisadores digitais, o cálculo é realizado através da Transformada Rápida de Fourier - FFT (Fast Fourier Transform), um algoritmo bastante eficiente que permite calcular o valor de uma transformada discreta de Fourier, em tempo real. \cite{espectro-sonoro}
+
+Com base nisso, o projeto consiste em desenvolver um detector de notas musicais utilizando sensores acoplados ao condicionador de sinais, conversor AD e software de monitoramento, no caso, o LabVIEW \cite{labview}, capaz de identificar uma sequência de 5 notas musicais monofônicas.
+	
+	\end{abstract}
+	
+	\section{Introdução}
+		O projeto de 2017 da disciplina de Laboratório de Instrumentação Elétrica teve como tema o desenvolvimento de um instrumento virtual de monitoramento capaz de adquirir, processar e  visualizar graficamente sinais de sensores. O objetivo deste projeto foi de que, ao longo do semestre,  o grupo aplicasse os conhecimentos adquiridos em aula para a composição do sistema.
+O grupo desenvolveu um produto que, com o uso de microcontroladores, transferisse leituras analógicas para uma unidade de processamento digital, como um PC, e aplicasse as transformações de Fourier e outras ferramentas matemáticas. 
+Para os testes iniciais, foi utilizado um programa online que gerasse frequências programadas. Mas o instrumento utilizado foi  um teclado arranjador cujas notas foram transmitidas ao circuito de condicionamento. O sinal obtido pelo circuito foi adquirido pelo microcontrolador,  no caso, o Arduino Uno, e processado para que o programa LabVIEW lesse as informações e apresentasse uma interface gráfica.
+		
+		Abaixo, apresenta-se um diagrama com os elementos do sistema:
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[scale=0.65]{./imagens/diagrama_blocos.png}
+			\label{diagrama}
+			\caption{Diagrama de blocos dos elementos do sistema}
+		\end{figure}
+
+ 	\pagebreak
+ 	
+ 	\section{Projeto}
+ 		\subsection{Aquisição de sinais}
+ 			Neste item, é descrito como o som do teclado será adiquirido e processado pelo Arduino.
+ 			
+ 			Para a composição do sistema, foram utilizados os componentes listados abaixo:
+ 			\begin{itemize}
+ 				\item Amplificador Operacional LM 741
+ 				\item Duas baterias de 9V
+ 				\item Dois conectores para baterias de 9V
+ 				\item Potenciômetro de 10k$\Omega$
+ 				\item Três resistores de 100k$\Omega$
+ 				\item Capacitor eletrolítico de10$\mu$F
+ 				\item Capacitor cerâmico de 47nF
+ 				\item Arduino UNO
+ 				\item Protoboard
+ 				\item Cabo P2
+ 				\item Plug fêmea P2
+ 			\end{itemize}
+ 			
+ 			Um sinal de áudio é composto por milhões de pequenas oscilações. Quando relacionado à eletrônica, essas oscilações representam tensões oscilatórias.
+ 			
+ 			Quando um sinal de áudio é observado no osciloscópio, é possível notar que a onda oscila em volta da linha de 0V. A amplitude de um sinal de áudio é a distância entre a tensão central e o pico mais alto, ou mais baixo. Por exemplo, num osciloscópio, se a amplitude for de 3V, o máximo será +3V e o mínimo, -3V. O problema é que o Arduino só consegue medir tensões entre 0 e 5V. Se for realizada uma medição de tensão abaixo de 0V, a parte negativa da onda seria cortada. Portanto, idealmente, seria necessário buscar obter uma onda de amplitude 2,5V que oscile por volta de 2,5V.
+ 			
+ 			Sinais gerados por instrumentos musicais são obtidos com amplitudes muito baixas, por isso precisam ser amplificadas para a amplitude desejada, no caso, 2,5V, com um aplificador operacional. 
+ 			
+ 			Entretanto, o centro da onda de tensão ainda estará em 0V e, para corrigir esse problema, o offset deverá ser alterado. Assim, colocando um offset de 5V no Arduino, o centro de tensão será 2,5V ao invés de 0V, e então a onda não cairá abaixo de 0V.
+ 			\pagebreak
+ 			\begin{figure}[h!]
+ 				\centering
+ 				\includegraphics[scale=0.5]{./imagens/esquematico.png}
+ 				\label{fig:esquematico}
+ 				\caption{Circuito de condicionamento com amp op e offset de 5V}
+ 			\end{figure}
+ 			
+ 			Para obter o sinal de áudio do instrumento, foi utilizado um cabo macho P2 e um plug P2 fêmea para a conexão no circuito.
+ 			
+ 			Além disso, serão utilizadas duas baterias de 9V conectadas em série para criar uma alimentação simétrica de +9V e -9V. As alimentações positiva e negativa serão então conectadas no amp op. O sinal obtido da fonte de áudio pelo cabo é ligado à entrada não inversora. Da junção das baterias de 9V em série, faz-se uma ligação ao terra. Para a realimentação, coloca-se um resistor de 100k$\Omega$ entre a saída e a entrada inversora do amp op. Para ajustar o ganho do amp op, será utilizado um potenciômetro de 10k$\Omega$
+ 			
+ 			A seguinte equação descreve a relação entre a amplitude do sinal antes e depois de passar pelo amp op:
+ 			
+ 			\begin{equation}
+ 				\frac{V_{out}}{V_{in}} \approx 1 + \frac{R2}{R1}
+ 			\end{equation}
+ 			
+ 			No caso, $R2 = 100k\Omega$ e $0 \leq R1 \leq 10k\Omega$. Ajustando o potenciômetro, é possível ajustar o ganho de amplificação.
+ 			
+ 			O circuito DC offset tem um divisor de tensão e um capacitor. O divisor de tensão possui dois resistores de 100k$\Omega$ em série que ligam a alimentação de 5V do Arduino ao terra. Como os resistores têm as mesmas resistências, a tensão na junção entre eles é igual a 2,5V. Essa junção de 2,5V é ligada à saída do amp op através de um capacitor de 10$\mu$F. Como a tensão no lado do amp op aumenta e diminui, isso faz com que a carga acumule momentaneamente e seja repelida para o lado do capacitor conectado à junção de 2,5V. Isso faz com que a tensão na junção de 2,5V oscile centrada em  2,5V, para cima e para baixo.
+ 			
+ 			\begin{figure}[h!]
+ 				\centering
+ 				\includegraphics[scale=0.4]{./imagens/protoboard}
+ 				\label{fig:protoboard}
+ 				\caption{Ilustração do circuito montado na protoboard}		
+ 			\end{figure}
+ 			
+ 			Em relação à etapa 2, o painel frontal foi modificado porque foram encontrados problemas ao realizar a etapa 3. Assim como foi descrito anteriormente, cria-se um vetor no VI que recebe todas as informações obtidas pelo Arduino e, com esses dados, é calculada a frequência predominante e os gráficos da onda e espectro de frequências. Porém, com a extensão LINX, não era possível identificar mais de uma nota musical, pois ela ocupava mais da metade da memória do Arduino, impossibilitando a aquisição de pontos numa frequência aceitável. Desse modo, essa extensão não foi utilizada. Em vez disso, para aumentar a frequência de amostragem, e consequentemente uma resolução de onda melhor definida, é criado um vetor de 300 valores de 1 byte, preenchidos com a leitura do conversor analógico-digital do Arduino, originalmente de 10 bits e convertidos para 1 byte, enviado serialmente para o LabView.
+ 			
+ 			\begin{figure}[h!]
+ 				\centering
+ 				\includegraphics[scale=0.6]{./imagens/programa_arduino}
+ 				\label{fig:programa}
+ 				\caption{Algorítmo para aquisição de dados}
+ 			\end{figure}
+ 			\pagebreak
+ 			
+ 			Para a comunicação serial, é utilizada a estrutura VISA. Inicializa-se a porta serial desejada, o programa entra num laço onde são realizadas as leituras dos dados enviados.
+ 			
+ 			\begin{figure}[h!]
+ 				\centering
+ 				\includegraphics[scale=0.9]{./imagens/vi_inicializacao}
+ 				\label{fig:inicializacao}
+ 				\caption{Inicialização da comunicação serial}
+ 			\end{figure}
+ 			
+ 			A estrutura retorna os dados lidos na forma de \textit{string}, portanto são necessárias conversões: primeiro, essa \textit{string} é transformada num vetor de valores de 1 byte (0 a 255); desses valores, é subtraído 130 para que fiquem centrados no 0 (-130 a 125), transformados em \textit{double} e, finalmente, multiplicados por 0,02 para que resultem valores de -2,6 a +2,5, representando a amplitude real do sinal adquirido.
+Os valores são concatenados em um vetor final, que armazena todo o histórico de dados desde o início do programa. Com esse vetor forma-se o gráfico do sinal, com pontos espaçados em 0,0001s, pois a frequência de amostragem do Arduino é igual a 10 KHz.
+
+ 			\begin{figure}[h!]
+				\centering
+				\includegraphics[scale=0.8]{./imagens/vi_aquisicao}
+				\label{fig:aquisicao}
+				\caption{Aquisição e conversão de dados} 			
+ 			\end{figure}
+ 			
+ 			Com esse vetor forma-se o gráfico do sinal, com pontos espaçados em 0,0001s, pois a frequência de amostragem do Arduino é igual a 10 KHz. Posteriormente, é realizada sua FFT, resultando num segundo gráfico, o do espectro das frequências, em que é possível detectar a frequência predominante e identificar a nota musical tocada.
+ 			
+ 			\begin{figure}[h!]
+ 				\centering
+ 				\includegraphics[scale=0.7]{./imagens/vi_graficos}
+ 				\label{fig:graficos}
+ 				\caption{Gráficos de amostragem do sinal}
+ 			\end{figure}
+ 			
+ 		\subsection{Interface gráfica}
+ 			A interface gráfica foi elaborada com o intuito de ser prática e visualmente agradável. O gráfico de baixo é a amostragem de sinal com espaçamento de 0,0001s entre cada ponto. O de cima é resultado da FFT, o espectro de frequências, da qual é possível identificar a frequência predominante. Ao lado, mostra-se a lista de notas musicais possíveis de serem identificadas e, logo abaixo, uma imagem de uma nota musical que sinaliza qual é a nota captada. 
+ 			
+ 			\begin{figure}[h!]
+ 				\centering
+ 				\includegraphics[scale=0.4]{./imagens/front_panel1}
+ 				\label{fig:front_panel}
+ 				\caption{Interface gráfica do painel frontal}
+ 			\end{figure}
+ 			
+ 	\section{Resultados}
+ 		Depois de muitos testes realizados com o circuito provisório montado em protoboard, foi construído o mesmo sistema em uma placa com todos os componentes soldados. 
+ 		
+ 		\begin{figure}[h!]
+ 			\centering
+ 			\includegraphics[scale=0.2]{./imagens/circuitos}
+ 			\label{fig:circuito_soldado}
+ 			\caption{Circuito definitivo e conversor analógico-digital}
+ 		\end{figure}
+ 		\pagebreak
+ 		
+ 		Para que o sistema não apresente falhas de estrutura e danos mecânicos, foi construída uma caixa para protegê-lo de tais hipotéticas situações.
+ 		
+ 		\begin{figure}[!h]
+ 			\centering
+ 			\includegraphics[scale=0.17]{./imagens/caixinha}
+ 			\label{fig:caixinha}
+ 			\caption{Compartimento para proteção mecânica do circuito}
+ 		\end{figure}
+ 		
+ 		
+ 		Realizados os testes e ajustado o VI, conseguiu-se obter um sistema que identificasse uma sequência infinita de notas musicais, e não apenas uma sequência de cinco notas.
+ 		
+ 		 		
+ 		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}{.5\textwidth}
+				\centering
+				\includegraphics[scale=0.085]{./imagens/pc1}
+				\label{fig:pc1}				
+			\end{subfigure}%
+			\begin{subfigure}{.5\textwidth}
+				\centering
+				\includegraphics[scale=0.085]{./imagens/pc2}
+				\label{fig:pc2}				
+			\end{subfigure}
+			\caption{Testes realizados com o sistema pronto utilizando uma
+				fonte de frequência contínua}
+		\end{figure}
+		\pagebreak
+ 		
+ 		Testes posteriores com mais de uma nota tocada simultaneamente também foram feitos. No caso, foram transmitidos sinais senoidais de 220 Hz, 440 Hz e 880 Hz, sendo a segunda com volume maior, ou seja, maior amplitude. O resultado foi uma amostragem de sinal não senoidal, pois foi uma soma das senoides de cada frequência. Além disso, o gráfico do espectro de frequências também demonstrou que o sistema é capaz de identificar sinais separados. O mais importante do teste foi identificar a frequência predominante, ou seja, a de maior amplitude, que foi a de 440 Hz (no caso, o valor foi aproximado devido às interferências dos outros sinais).
+ 		
+ 		\begin{figure}[h!]
+ 			\centering
+ 			\includegraphics[scale=0.4]{./imagens/nao_senoidal}
+ 			\label{fig:nao_senoidal}
+ 			\caption{Soma de três ondas senoidais diferentes}
+ 		\end{figure}
+
+		\pagebreak
+		
+	\section{Conclusão}
+	A complexidade de se alinhar os conteúdos teóricos com uma aplicação prática (afinador) foi bastante desafiadora. 
+	
+Nesta última etapa, foram encontrados vários problemas a serem solucionados somente após muita pesquisa e experiência com o programa LabView. 
+
+No começo, a maior dificuldade era a familiaridade com a teoria a ser aplicada no VI, como por exemplo, a TDF e FFT. Ao longo do desenvolvimento do projeto, o leque extenso de ferramentas do LabView foi responsável pelas muitas horas gastas para entender o programa e saber construir o código mais viável. 
+Com isso, foi possível perceber mais uma vez a importância de um sólido conhecimento sobre as ferramentas a serem utilizadas, mais a teoria a ser aplicada, para que um problema seja resolvido com êxito. 
+
+Agradecemos especialmente aos professores que nos transmitiram conhecimento, aos monitores que se mostraram dispostos a ajudar e aos amigos e veteranos com quem houve trocas de ideias. 
+
+	\pagebreak
+	
+	\bibliographystyle{ieeetr}	
+	\bibliography{References}		
+
+\end{document}
